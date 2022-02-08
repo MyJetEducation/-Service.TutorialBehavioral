@@ -6,7 +6,6 @@ using Service.TutorialBehavioral.Grpc;
 using Service.TutorialBehavioral.Grpc.Models;
 using Service.TutorialBehavioral.Grpc.Models.State;
 using Service.TutorialBehavioral.Mappers;
-using Service.TutorialBehavioral.Models;
 using Service.UserProgress.Grpc;
 using Service.UserProgress.Grpc.Models;
 using Service.UserReward.Grpc;
@@ -35,11 +34,9 @@ namespace Service.TutorialBehavioral.Services
 
 			foreach ((_, EducationStructureUnit unit) in Tutorial.Units)
 			{
-				UnitInfoModel unitInfo = await _taskProgressService.GetUnitProgressAsync(userId, unit.Unit);
-				if (unitInfo == null)
-					break;
+				(BehavioralStateUnitGrpcModel stateUnitModel, _, _) = await _taskProgressService.GetUnitProgressAsync(userId, unit.Unit);
 
-				units.Add(unitInfo.BehavioralStateUnit);
+				units.Add(stateUnitModel);
 			}
 
 			UserAchievementsGrpcResponse achievements = await _userRewardService.GetUserAchievementsAsync(new GetUserAchievementsGrpcRequest {UserId = userId});
@@ -61,19 +58,19 @@ namespace Service.TutorialBehavioral.Services
 		public async ValueTask<FinishUnitGrpcResponse> GetFinishStateAsync(GetFinishStateGrpcRequest request)
 		{
 			Guid? userId = request.UserId;
-			var result = new FinishUnitGrpcResponse();
+
+			(BehavioralStateUnitGrpcModel stateUnitModel, int trueFalseProgress, int caseProgress) = await _taskProgressService.GetUnitProgressAsync(userId, request.Unit);
+
+			var result = new FinishUnitGrpcResponse
+			{
+				Unit = stateUnitModel,
+				TrueFalseProgress = trueFalseProgress,
+				CaseProgress = caseProgress
+			};
 
 			UserAchievementsGrpcResponse newAchievements = await _userRewardService.GetUserNewUnitAchievementsAsync(new GetUserAchievementsGrpcRequest {UserId = userId});
 			if (newAchievements != null)
 				result.NewAchievements = newAchievements.Items;
-
-			UnitInfoModel unitInfo = await _taskProgressService.GetUnitProgressAsync(userId, request.Unit);
-			if (unitInfo == null)
-				return result;
-
-			result.Unit = unitInfo.BehavioralStateUnit;
-			result.TrueFalseProgress = unitInfo.TrueFalseProgress;
-			result.CaseProgress = unitInfo.CaseProgress;
 
 			return result;
 		}
