@@ -46,6 +46,6 @@ namespace Service.TutorialBehavioral.Services
 		}
 
 		public async ValueTask<TestScoreGrpcResponse> Unit4GameAsync(BehavioralTaskGameGrpcRequest request) => 
-			await _taskProgressService.SetTaskProgressAsync(request.UserId, Unit4, Unit4.Tasks[6], request.IsRetry, request.Duration, CountProgress(request.Passed));
+			await _taskProgressService.SetTaskProgressAsync(request.UserId, Unit4, Unit4.Tasks[6], request.IsRetry, request.Duration);
 	}
 }
