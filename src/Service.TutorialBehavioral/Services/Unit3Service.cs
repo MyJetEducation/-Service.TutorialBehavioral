@@ -1,21 +1,22 @@
 ﻿using System.Threading.Tasks;
-using Service.Core.Client.Education;
+using Service.Education;
+using Service.Education.Structure;
 using Service.TutorialBehavioral.Grpc.Models;
 using Service.TutorialBehavioral.Grpc.Models.State;
-using static Service.TutorialBehavioral.Services.AnswerHelper;
+using static Service.Education.Helpers.AnswerHelper;
 
 namespace Service.TutorialBehavioral.Services
 {
 	public partial class TutorialBehavioralService
 	{
-		public static readonly EducationStructureUnit Unit3 = Tutorial.Units[3];
+		public static readonly EducationStructureUnit Unit3 = EducationStructure.Tutorials[EducationTutorial.BehavioralFinance].Units[3];
 
 		public async ValueTask<TestScoreGrpcResponse> Unit3TextAsync(BehavioralTaskTextGrpcRequest request) => 
 			await _taskProgressService.SetTaskProgressAsync(request.UserId, Unit3, Unit3.Tasks[1], request.IsRetry, request.Duration);
 
 		public async ValueTask<TestScoreGrpcResponse> Unit3TestAsync(BehavioralTaskTestGrpcRequest request)
 		{
-			BehavioralTaskTestAnswerGrpcModel[] answers = request.Answers;
+			ITaskTestAnswer[] answers = request.Answers;
 
 			int progress = CheckAnswer(20, answers, 1, 2)
 				+ CheckAnswer(20, answers, 2, 2)
@@ -34,7 +35,7 @@ namespace Service.TutorialBehavioral.Services
 
 		public async ValueTask<TestScoreGrpcResponse> Unit3TrueFalseAsync(BehavioralTaskTrueFalseGrpcRequest request)
 		{
-			BehavioralTaskTrueFalseAnswerGrpcModel[] answers = request.Answers;
+			ITaskTrueFalseAnswer[] answers = request.Answers;
 
 			int progress = CheckAnswer(20, answers, 1, false)
 				+ CheckAnswer(20, answers, 2, true)

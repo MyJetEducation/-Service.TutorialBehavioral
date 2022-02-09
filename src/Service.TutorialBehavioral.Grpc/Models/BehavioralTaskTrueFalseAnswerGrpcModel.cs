@@ -1,9 +1,10 @@
 ﻿using System.Runtime.Serialization;
+using Service.Education;
 
 namespace Service.TutorialBehavioral.Grpc.Models
 {
 	[DataContract]
-	public class BehavioralTaskTrueFalseAnswerGrpcModel
+	public class BehavioralTaskTrueFalseAnswerGrpcModel : ITaskTrueFalseAnswer
 	{
 		[DataMember(Order = 1)]
 		public int Number { get; set; }

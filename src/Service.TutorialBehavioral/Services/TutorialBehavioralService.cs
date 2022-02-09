@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Service.Core.Client.Education;
+using Service.Education.Structure;
 using Service.TutorialBehavioral.Grpc;
 using Service.TutorialBehavioral.Grpc.Models;
 using Service.TutorialBehavioral.Grpc.Models.State;
@@ -10,12 +10,13 @@ using Service.UserProgress.Grpc;
 using Service.UserProgress.Grpc.Models;
 using Service.UserReward.Grpc;
 using Service.UserReward.Grpc.Models;
-using static Service.TutorialBehavioral.Services.AnswerHelper;
 
 namespace Service.TutorialBehavioral.Services
 {
 	public partial class TutorialBehavioralService : ITutorialBehavioralService
 	{
+		private static readonly EducationStructureTutorial Tutorial = EducationStructure.Tutorials[EducationTutorial.BehavioralFinance];
+
 		private readonly ITaskProgressService _taskProgressService;
 		private readonly IUserRewardService _userRewardService;
 		private readonly IUserProgressService _userProgressService;

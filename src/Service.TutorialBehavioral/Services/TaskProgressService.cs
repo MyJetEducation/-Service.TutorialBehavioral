@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Service.Core.Client.Constants;
-using Service.Core.Client.Education;
 using Service.Core.Client.Models;
+using Service.Education.Constants;
+using Service.Education.Extensions;
+using Service.Education.Helpers;
+using Service.Education.Structure;
 using Service.EducationProgress.Grpc;
 using Service.EducationProgress.Grpc.Models;
 using Service.TutorialBehavioral.Grpc.Models.State;
@@ -43,7 +45,7 @@ namespace Service.TutorialBehavioral.Services
 				Tutorial = EducationTutorial.BehavioralFinance,
 				Unit = unitId,
 				Task = taskId,
-				Value = progress ?? AnswerProgress.MaxAnswerProgress,
+				Value = progress ?? Progress.MaxProgress,
 				Duration = duration,
 				IsRetry = isRetry
 			});
@@ -79,7 +81,7 @@ namespace Service.TutorialBehavioral.Services
 				return false;
 
 			//retry 100% score task (exclude game)
-			if (isRetry && notGame && taskProgress is { HasProgress: true, Value: AnswerProgress.MaxAnswerProgress })
+			if (isRetry && notGame && taskProgress is { HasProgress: true, Value: Progress.MaxProgress })
 				return false;
 
 			//can't retry (by date or has no retry-count)
@@ -131,7 +133,7 @@ namespace Service.TutorialBehavioral.Services
 			});
 
 			int unitProgress = (unitProgressResponse?.Value).GetValueOrDefault();
-			if (unitProgress == AnswerProgress.MinAnswerProgress)
+			if (unitProgress.IsMinProgress())
 				return (null, 0, 0);
 
 			var tasks = new List<BehavioralStateTaskGrpcModel>();
@@ -150,7 +152,7 @@ namespace Service.TutorialBehavioral.Services
 					break;
 
 				int progressValue = taskProgress.Value;
-				bool lowProgress = progressValue < AnswerProgress.MaxAnswerProgress;
+				bool lowProgress = !progressValue.IsMaxProgress();
 				bool inRetryState = await _retryTaskService.TaskInRetryStateAsync(userId, unit, taskId);
 				bool canRetryTask = !inRetryState && lowProgress;
 
@@ -210,7 +212,7 @@ namespace Service.TutorialBehavioral.Services
 				UserId = userId
 			});
 
-			return (taskProgressResponse?.Value).GetValueOrDefault() >= AnswerProgress.OkAnswerProgress;
+			return (taskProgressResponse?.Value).GetValueOrDefault().IsOkProgress();
 		}
 	}
 }
