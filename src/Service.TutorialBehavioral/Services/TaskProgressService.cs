@@ -100,8 +100,8 @@ namespace Service.TutorialBehavioral.Services
 			if (Program.ReloadedSettings(model => model.TestMode).Invoke())
 				return true;
 
-			if (unit.Unit == 1 && task == 1 && await IsPreviousTutorialLearned(userId))
-				return true;
+			if (unit.Unit == 1 && task == 1)
+				return await IsPreviousTutorialLearned(userId);
 
 			EducationStructureUnit prevUnit = AnswerHelper.Tutorial.Units[unit.Unit];
 			EducationStructureTask prevTask;
