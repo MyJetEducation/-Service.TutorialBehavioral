@@ -229,13 +229,13 @@ namespace Service.TutorialBehavioral.Services
 
 		private async ValueTask<bool> IsPreviousTutorialLearned(Guid? userId)
 		{
-			EducationProgressGrpcResponse taskProgressResponse = await _progressService.GetProgressAsync(new GetEducationProgressGrpcRequest
+			TutorialEducationProgressGrpcResponse tutorialProgress = await _progressService.GetTutorialProgressAsync(new GetTutorialEducationProgressGrpcRequest
 			{
 				Tutorial = EducationTutorial.PersonalFinance,
 				UserId = userId
 			});
 
-			return (taskProgressResponse?.Value).GetValueOrDefault().IsOkProgress();
+			return tutorialProgress is {Finished: true } && tutorialProgress.TaskScore.IsOkProgress();
 		}
 	}
 }
