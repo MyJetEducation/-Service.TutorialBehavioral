@@ -2,10 +2,9 @@
 using System.Threading.Tasks;
 using Service.Core.Client.Models;
 using Service.Core.Client.Services;
-using Service.Education.Structure;
-using Service.EducationProgress.Grpc.Models;
 using Service.EducationRetry.Grpc;
 using Service.EducationRetry.Grpc.Models;
+using Service.TutorialBehavioral.Helper;
 
 namespace Service.TutorialBehavioral.Services
 {
@@ -25,7 +24,7 @@ namespace Service.TutorialBehavioral.Services
 			TaskRetryStateGrpcResponse response = await _retryService.GetTaskRetryStateAsync(new GetTaskRetryStateGrpcRequest
 			{
 				UserId = userId,
-				Tutorial = EducationTutorial.BehavioralFinance,
+				Tutorial = TutorialHelper.Tutorial,
 				Unit = unit,
 				Task = task
 			});
@@ -33,9 +32,8 @@ namespace Service.TutorialBehavioral.Services
 			return response.InRetry;
 		}
 
-		public async ValueTask<bool> CanRetryByTimeAsync(Guid? userId, TaskEducationProgressGrpcModel progressGrpcModel)
+		public async ValueTask<bool> CanRetryByTimeAsync(Guid? userId, DateTime? progressDate)
 		{
-			DateTime? progressDate = progressGrpcModel.Date;
 			if (progressDate == null || !OneDayGone(progressDate.Value))
 				return false;
 
@@ -64,7 +62,7 @@ namespace Service.TutorialBehavioral.Services
 			CommonGrpcResponse decreased = await _retryService.ClearTaskRetryStateAsync(new ClearTaskRetryStateGrpcRequest
 			{
 				UserId = userId,
-				Tutorial = EducationTutorial.BehavioralFinance,
+				Tutorial = TutorialHelper.Tutorial,
 				Unit = unit,
 				Task = task
 			});

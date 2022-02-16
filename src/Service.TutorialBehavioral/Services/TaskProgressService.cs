@@ -11,6 +11,8 @@ using Service.Education.Structure;
 using Service.EducationProgress.Grpc;
 using Service.EducationProgress.Grpc.Models;
 using Service.TutorialBehavioral.Grpc.Models.State;
+using Service.TutorialBehavioral.Helper;
+using Service.TutorialBehavioral.Models;
 
 namespace Service.TutorialBehavioral.Services
 {
@@ -35,14 +37,14 @@ namespace Service.TutorialBehavioral.Services
 			if (userId == null
 				|| !await ValidatePostition(userId, unit, taskId)
 				|| !await ValidateProgress(userId, unitId, task, isRetry))
-				return new TestScoreGrpcResponse {IsSuccess = false};
+				return new TestScoreGrpcResponse { IsSuccess = false };
 
 			_logger.LogDebug("Try to set progress for user {userId}...", userId);
 
 			CommonGrpcResponse response = await _progressService.SetProgressAsync(new SetEducationProgressGrpcRequest
 			{
 				UserId = userId,
-				Tutorial = EducationTutorial.BehavioralFinance,
+				Tutorial = TutorialHelper.Tutorial,
 				Unit = unitId,
 				Task = taskId,
 				Value = progress ?? Progress.MaxProgress,
@@ -59,20 +61,15 @@ namespace Service.TutorialBehavioral.Services
 					_logger.LogError("Error while clearing retry state for user {user}, unit: {unit}, task: {task}.", userId, unitId, taskId);
 			}
 
-			(BehavioralStateUnitGrpcModel stateUnitModel, _, _) = await GetUnitProgressAsync(userId, unitId);
-
 			return new TestScoreGrpcResponse
 			{
 				IsSuccess = response.IsSuccess,
-				Unit = stateUnitModel
+				Unit = await GetUnitProgressAsync(userId, unitId)
 			};
 		}
 
 		private async ValueTask<bool> ValidateProgress(Guid? userId, int unit, EducationStructureTask task, bool isRetry)
 		{
-			if (Program.ReloadedSettings(model => model.TestMode).Invoke())
-				return true;
-
 			TaskEducationProgressGrpcModel taskProgress = await GetTaskProgressAsync(userId, unit, task.Task);
 			bool notGame = task.TaskType != EducationTaskType.Game;
 
@@ -97,9 +94,6 @@ namespace Service.TutorialBehavioral.Services
 
 		private async ValueTask<bool> ValidatePostition(Guid? userId, EducationStructureUnit unit, int task)
 		{
-			if (Program.ReloadedSettings(model => model.TestMode).Invoke())
-				return true;
-
 			if (unit.Unit == 1 && task == 1)
 				return await IsPreviousTutorialLearned(userId);
 
@@ -123,32 +117,43 @@ namespace Service.TutorialBehavioral.Services
 			return progressHasProgress;
 		}
 
-		public async ValueTask<(BehavioralStateUnitGrpcModel stateUnitModel, int TrueFalseProgress, int CaseProgress)> GetUnitProgressAsync(Guid? userId, int unit)
+		public async ValueTask<UnitStateGrpcModel> GetUnitProgressAsync(Guid? userId, int unit)
 		{
-			EducationProgressGrpcResponse unitProgressResponse = await _progressService.GetProgressAsync(new GetEducationProgressGrpcRequest
+			var result = new UnitStateGrpcModel();
+
+			EducationProgressGrpcResponse progressResponse = await _progressService.GetProgressAsync(new GetEducationProgressGrpcRequest
 			{
-				Tutorial = EducationTutorial.BehavioralFinance,
+				Tutorial = TutorialHelper.Tutorial,
 				Unit = unit,
 				UserId = userId
 			});
 
-			int unitProgress = (unitProgressResponse?.Value).GetValueOrDefault();
+			int unitProgress = (progressResponse?.Value).GetValueOrDefault();
+			result.TestScore = unitProgress;
+
 			if (unitProgress.IsMinProgress())
-				return (null, 0, 0);
+				return result;
 
-			var tasks = new List<BehavioralStateTaskGrpcModel>();
-			EducationStructureUnit structureUnit = EducationHelper.GetUnit(EducationTutorial.BehavioralFinance, unit);
-			IDictionary<int, EducationStructureTask> unitTasks = structureUnit.Tasks;
+			UnitEducationProgressGrpcResponse unitProgressResponse = await _progressService.GetUnitProgressAsync(new GetUnitEducationProgressGrpcRequest
+			{
+				Tutorial = TutorialHelper.Tutorial,
+				Unit = unit,
+				UserId = userId
+			});
 
-			var trueFalseProgress = new List<int>();
-			var caseProgress = new List<int>();
+			TaskEducationProgressGrpcModel[] taskInfos = unitProgressResponse?.Progress;
+			if (taskInfos == null)
+				return result;
+
+			var tasks = new List<TaskStateGrpcModel>();
+			IDictionary<int, EducationStructureTask> unitTasks = EducationHelper.GetUnit(TutorialHelper.Tutorial, unit).Tasks;
 
 			foreach ((_, EducationStructureTask structureTask) in unitTasks)
 			{
 				int taskId = structureTask.Task;
 
-				TaskEducationProgressGrpcModel taskProgress = await GetTaskProgressAsync(userId, unit, taskId);
-				if (!(taskProgress is { HasProgress: true }))
+				TaskEducationProgressGrpcModel taskProgress = taskInfos.FirstOrDefault(model => model.Task == taskId);
+				if (taskProgress is not { HasProgress: true })
 					break;
 
 				int progressValue = taskProgress.Value;
@@ -156,17 +161,7 @@ namespace Service.TutorialBehavioral.Services
 				bool inRetryState = await _retryTaskService.TaskInRetryStateAsync(userId, unit, taskId);
 				bool canRetryTask = !inRetryState && lowProgress;
 
-				switch (structureTask.TaskType)
-				{
-					case EducationTaskType.TrueFalse:
-						trueFalseProgress.Add(progressValue);
-						break;
-					case EducationTaskType.Case:
-						caseProgress.Add(progressValue);
-						break;
-				}
-
-				tasks.Add(new BehavioralStateTaskGrpcModel
+				tasks.Add(new TaskStateGrpcModel
 				{
 					Task = taskId,
 					TestScore = progressValue,
@@ -174,28 +169,24 @@ namespace Service.TutorialBehavioral.Services
 					{
 						InRetry = inRetryState,
 						CanRetryByCount = canRetryTask && await _retryTaskService.HasRetryCountAsync(userId),
-						CanRetryByTime = canRetryTask && await _retryTaskService.CanRetryByTimeAsync(userId, taskProgress)
+						CanRetryByTime = canRetryTask && await _retryTaskService.CanRetryByTimeAsync(userId, taskProgress.Date)
 					}
 				});
 			}
 
-			return (new BehavioralStateUnitGrpcModel {Unit = unit, TestScore = unitProgress, Tasks = tasks.ToArray()},
-				GetProgressByTaskType(EducationTaskType.TrueFalse, unitTasks, trueFalseProgress),
-				GetProgressByTaskType(EducationTaskType.Case, unitTasks, caseProgress));
+			return new UnitStateGrpcModel
+			{
+				Unit = unit,
+				TestScore = unitProgress,
+				Tasks = tasks.ToArray()
+			};
 		}
 
-		private static int GetProgressByTaskType(EducationTaskType taskType, IDictionary<int, EducationStructureTask> unitTasks, IEnumerable<int> progressList)
-		{
-			int allTasksCount = unitTasks.Count(pair => pair.Value.TaskType == taskType);
-
-			return progressList.Sum() / allTasksCount;
-		}
-
-		public async ValueTask<TaskEducationProgressGrpcModel> GetTaskProgressAsync(Guid? userId, int unit, int task)
+		private async ValueTask<TaskEducationProgressGrpcModel> GetTaskProgressAsync(Guid? userId, int unit, int task)
 		{
 			TaskEducationProgressGrpcResponse taskProgressResponse = await _progressService.GetTaskProgressAsync(new GetTaskEducationProgressGrpcRequest
 			{
-				Tutorial = EducationTutorial.BehavioralFinance,
+				Tutorial = TutorialHelper.Tutorial,
 				Unit = unit,
 				Task = task,
 				UserId = userId
@@ -204,11 +195,43 @@ namespace Service.TutorialBehavioral.Services
 			return taskProgressResponse?.Progress;
 		}
 
-		public async ValueTask<bool> IsPreviousTutorialLearned(Guid? userId)
+		public async ValueTask<TaskTypeProgressInfo> GetTotalProgressAsync(Guid? userId, int? unit = null)
+		{
+			TaskTypeProgressGrpcResponse typeProgressGrpcResponse = await _progressService.GetTaskTypeProgressAsync(new GetTaskTypeProgressGrpcRequest
+			{
+				Tutorial = TutorialHelper.Tutorial,
+				Unit = unit,
+				UserId = userId
+			});
+
+			var result = new TaskTypeProgressInfo();
+
+			TaskTypeProgressGrpcModel[] typeProgressGrpcModels = typeProgressGrpcResponse?.TaskTypeProgress;
+			if (typeProgressGrpcModels == null)
+				return result;
+
+			int CountByType(EducationTaskType taskType)
+			{
+				int[] values = typeProgressGrpcModels.First(model => model.TaskType == taskType).Values;
+
+				return (int)Math.Round((double)values.Sum() / values.Length);
+			}
+
+			result.Text = CountByType(EducationTaskType.Text);
+			result.Test = CountByType(EducationTaskType.Test);
+			result.Case = CountByType(EducationTaskType.Case);
+			result.Video = CountByType(EducationTaskType.Video);
+			result.Game = CountByType(EducationTaskType.Game);
+			result.TrueFalse = CountByType(EducationTaskType.TrueFalse);
+
+			return result;
+		}
+
+		private async ValueTask<bool> IsPreviousTutorialLearned(Guid? userId)
 		{
 			EducationProgressGrpcResponse taskProgressResponse = await _progressService.GetProgressAsync(new GetEducationProgressGrpcRequest
 			{
-				Tutorial = EducationTutorial.PersonalFinance,
+				Tutorial = TutorialHelper.Tutorial,
 				UserId = userId
 			});
 

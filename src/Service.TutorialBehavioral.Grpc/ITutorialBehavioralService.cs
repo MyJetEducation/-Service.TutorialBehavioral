@@ -9,10 +9,7 @@ namespace Service.TutorialBehavioral.Grpc
 	public interface ITutorialBehavioralService
 	{
 		[OperationContract]
-		ValueTask<BehavioralStateGrpcResponse> GetDashboardStateAsync(BehavioralSelectTaskUnitGrpcRequest request);
-
-		[OperationContract]
-		ValueTask<FinishUnitGrpcResponse> GetFinishStateAsync(GetFinishStateGrpcRequest request);
+		ValueTask<FinishStateGrpcResponse> GetFinishStateAsync(GetFinishStateGrpcRequest request);
 
 		#region Unit1
 

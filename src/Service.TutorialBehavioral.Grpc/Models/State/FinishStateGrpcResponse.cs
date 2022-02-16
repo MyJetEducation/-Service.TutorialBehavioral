@@ -4,18 +4,18 @@ using Service.Core.Client.Constants;
 namespace Service.TutorialBehavioral.Grpc.Models.State
 {
 	[DataContract]
-	public class FinishUnitGrpcResponse
+	public class FinishStateGrpcResponse
 	{
 		[DataMember(Order = 1)]
-		public BehavioralStateUnitGrpcModel Unit { get; set; }
+		public int Test { get; set; }
 
 		[DataMember(Order = 2)]
-		public int TrueFalseProgress { get; set; }
+		public int TrueFalse { get; set; }
 
 		[DataMember(Order = 3)]
-		public int CaseProgress { get; set; }
+		public int Case { get; set; }
 
 		[DataMember(Order = 4)]
-		public UserAchievement[] NewAchievements { get; set; }
+		public UserAchievement[] Achievements { get; set; }
 	}
 }

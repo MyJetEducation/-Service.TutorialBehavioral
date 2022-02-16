@@ -5,13 +5,13 @@ using Service.TutorialBehavioral.Grpc;
 
 namespace Service.TutorialBehavioral.Client
 {
-    public static class AutofacHelper
-    {
-        public static void RegisterTutorialBehavioralClient(this ContainerBuilder builder, string grpcServiceUrl)
-        {
-            var factory = new TutorialBehavioralClientFactory(grpcServiceUrl);
+	public static class AutofacHelper
+	{
+		public static void RegisterTutorialBehavioralClient(this ContainerBuilder builder, string grpcServiceUrl)
+		{
+			var factory = new TutorialBehavioralClientFactory(grpcServiceUrl);
 
-            builder.RegisterInstance(factory.GetTutorialBehavioralService()).As<ITutorialBehavioralService>().SingleInstance();
-        }
-    }
+			builder.RegisterInstance(factory.GetTutorialBehavioralService()).As<ITutorialBehavioralService>().SingleInstance();
+		}
+	}
 }

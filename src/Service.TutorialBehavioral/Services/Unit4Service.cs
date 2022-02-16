@@ -3,15 +3,16 @@ using Service.Education;
 using Service.Education.Structure;
 using Service.TutorialBehavioral.Grpc.Models;
 using Service.TutorialBehavioral.Grpc.Models.State;
+using Service.TutorialBehavioral.Helper;
 using static Service.Education.Helpers.AnswerHelper;
 
 namespace Service.TutorialBehavioral.Services
 {
 	public partial class TutorialBehavioralService
 	{
-		public static readonly EducationStructureUnit Unit4 = EducationStructure.Tutorials[EducationTutorial.BehavioralFinance].Units[4];
+		private static readonly EducationStructureUnit Unit4 = TutorialHelper.EducationStructureTutorial.Units[4];
 
-		public async ValueTask<TestScoreGrpcResponse> Unit4TextAsync(BehavioralTaskTextGrpcRequest request) => 
+		public async ValueTask<TestScoreGrpcResponse> Unit4TextAsync(BehavioralTaskTextGrpcRequest request) =>
 			await _taskProgressService.SetTaskProgressAsync(request.UserId, Unit4, Unit4.Tasks[1], request.IsRetry, request.Duration);
 
 		public async ValueTask<TestScoreGrpcResponse> Unit4TestAsync(BehavioralTaskTestGrpcRequest request)
@@ -27,10 +28,10 @@ namespace Service.TutorialBehavioral.Services
 			return await _taskProgressService.SetTaskProgressAsync(request.UserId, Unit4, Unit4.Tasks[2], request.IsRetry, request.Duration, progress);
 		}
 
-		public async ValueTask<TestScoreGrpcResponse> Unit4VideoAsync(BehavioralTaskVideoGrpcRequest request) => 
+		public async ValueTask<TestScoreGrpcResponse> Unit4VideoAsync(BehavioralTaskVideoGrpcRequest request) =>
 			await _taskProgressService.SetTaskProgressAsync(request.UserId, Unit4, Unit4.Tasks[3], request.IsRetry, request.Duration);
 
-		public async ValueTask<TestScoreGrpcResponse> Unit4CaseAsync(BehavioralTaskCaseGrpcRequest request) => 
+		public async ValueTask<TestScoreGrpcResponse> Unit4CaseAsync(BehavioralTaskCaseGrpcRequest request) =>
 			await _taskProgressService.SetTaskProgressAsync(request.UserId, Unit4, Unit4.Tasks[4], request.IsRetry, request.Duration, CountProgress(request.Value == 1));
 
 		public async ValueTask<TestScoreGrpcResponse> Unit4TrueFalseAsync(BehavioralTaskTrueFalseGrpcRequest request)
@@ -46,7 +47,7 @@ namespace Service.TutorialBehavioral.Services
 			return await _taskProgressService.SetTaskProgressAsync(request.UserId, Unit4, Unit4.Tasks[5], request.IsRetry, request.Duration, progress);
 		}
 
-		public async ValueTask<TestScoreGrpcResponse> Unit4GameAsync(BehavioralTaskGameGrpcRequest request) => 
+		public async ValueTask<TestScoreGrpcResponse> Unit4GameAsync(BehavioralTaskGameGrpcRequest request) =>
 			await _taskProgressService.SetTaskProgressAsync(request.UserId, Unit4, Unit4.Tasks[6], request.IsRetry, request.Duration);
 	}
 }
