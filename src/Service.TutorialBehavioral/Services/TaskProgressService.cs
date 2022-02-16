@@ -231,7 +231,7 @@ namespace Service.TutorialBehavioral.Services
 		{
 			EducationProgressGrpcResponse taskProgressResponse = await _progressService.GetProgressAsync(new GetEducationProgressGrpcRequest
 			{
-				Tutorial = TutorialHelper.Tutorial,
+				Tutorial = EducationTutorial.PersonalFinance,
 				UserId = userId
 			});
 
