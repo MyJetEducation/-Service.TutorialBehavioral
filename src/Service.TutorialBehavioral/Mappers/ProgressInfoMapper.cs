@@ -12,7 +12,10 @@ namespace Service.TutorialBehavioral.Mappers
 			{
 				Case = info.Case,
 				TrueFalse = info.TrueFalse,
+				Game = info.Game,
 				Test = info.Test,
+				Text = info.Text,
+				Video = info.Video,
 				Achievements = achievements
 			};
 		}
