@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Microsoft.Extensions.Logging;
 using Service.EducationProgress.Client;
 using Service.EducationRetry.Client;
 using Service.UserProgress.Client;
@@ -10,8 +11,9 @@ namespace Service.TutorialBehavioral.Modules
 	{
 		protected override void Load(ContainerBuilder builder)
 		{
+			builder.RegisterEducationRetryClient(Program.Settings.EducationRetryServiceUrl, Program.LogFactory.CreateLogger(typeof(EducationRetryClientFactory)));
+
 			builder.RegisterEducationProgressClient(Program.Settings.EducationProgressServiceUrl);
-			builder.RegisterEducationRetryClient(Program.Settings.EducationRetryServiceUrl);
 			builder.RegisterUserRewardClient(Program.Settings.UserRewardServiceUrl);
 			builder.RegisterUserProgressClient(Program.Settings.UserProgressServiceUrl);
 		}
