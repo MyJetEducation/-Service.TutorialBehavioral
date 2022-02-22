@@ -20,7 +20,7 @@ namespace Service.TutorialBehavioral.Services
 			ITaskTestAnswer[] answers = request.Answers;
 
 			int progress = CheckAnswer(20, answers, 1, 1)
-				+ CheckAnswer(20, answers, 2, 2, 1)
+				+ CheckAnswer(20, answers, 2, 1)
 				+ CheckAnswer(20, answers, 3, 2)
 				+ CheckAnswer(20, answers, 4, 1)
 				+ CheckAnswer(20, answers, 5, 2);
