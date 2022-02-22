@@ -19,7 +19,7 @@ namespace Service.TutorialBehavioral.Services
 		{
 			ITaskTestAnswer[] answers = request.Answers;
 
-			int progress = CheckAnswer(20, answers, 1, 1, 2)
+			int progress = CheckAnswer(20, answers, 1, 2)
 				+ CheckAnswer(20, answers, 2, 2, 3)
 				+ CheckAnswer(20, answers, 3, 1)
 				+ CheckAnswer(20, answers, 4, 2)
