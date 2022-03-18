@@ -4,7 +4,7 @@ using Service.Education;
 namespace Service.TutorialBehavioral.Grpc.Models
 {
 	[DataContract]
-	public class BehavioralTaskTestAnswerGrpcModel : ITaskTestAnswer
+	public class TaskTestAnswerGrpcModel : ITaskTestAnswer
 	{
 		[DataMember(Order = 1)]
 		public int Number { get; set; }

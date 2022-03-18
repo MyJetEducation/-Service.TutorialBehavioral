@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Service.TutorialBehavioral.Grpc;
-using Service.TutorialBehavioral.Grpc.Models;
 using Service.TutorialBehavioral.Grpc.Models.State;
 using Service.TutorialBehavioral.Mappers;
 using Service.TutorialBehavioral.Models;

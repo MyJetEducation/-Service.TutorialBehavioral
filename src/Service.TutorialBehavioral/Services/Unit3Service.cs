@@ -3,6 +3,7 @@ using Service.Education;
 using Service.Education.Structure;
 using Service.TutorialBehavioral.Grpc.Models;
 using Service.TutorialBehavioral.Grpc.Models.State;
+using Service.TutorialBehavioral.Grpc.Models.Task;
 using Service.TutorialBehavioral.Helper;
 using static Service.Education.Helpers.AnswerHelper;
 
@@ -12,10 +13,10 @@ namespace Service.TutorialBehavioral.Services
 	{
 		private static readonly EducationStructureUnit Unit3 = TutorialHelper.StructureTutorial.Units[3];
 
-		public async ValueTask<TestScoreGrpcResponse> Unit3TextAsync(BehavioralTaskTextGrpcRequest request) =>
+		public async ValueTask<TestScoreGrpcResponse> Unit3TextAsync(TaskTextGrpcRequest request) =>
 			await _taskProgressService.SetTaskProgressAsync(request.UserId, Unit3, Unit3.Tasks[1], request.IsRetry, request.Duration);
 
-		public async ValueTask<TestScoreGrpcResponse> Unit3TestAsync(BehavioralTaskTestGrpcRequest request)
+		public async ValueTask<TestScoreGrpcResponse> Unit3TestAsync(TaskTestGrpcRequest request)
 		{
 			ITaskTestAnswer[] answers = request.Answers;
 
@@ -28,13 +29,13 @@ namespace Service.TutorialBehavioral.Services
 			return await _taskProgressService.SetTaskProgressAsync(request.UserId, Unit3, Unit3.Tasks[2], request.IsRetry, request.Duration, progress);
 		}
 
-		public async ValueTask<TestScoreGrpcResponse> Unit3VideoAsync(BehavioralTaskVideoGrpcRequest request) =>
+		public async ValueTask<TestScoreGrpcResponse> Unit3VideoAsync(TaskVideoGrpcRequest request) =>
 			await _taskProgressService.SetTaskProgressAsync(request.UserId, Unit3, Unit3.Tasks[3], request.IsRetry, request.Duration);
 
-		public async ValueTask<TestScoreGrpcResponse> Unit3CaseAsync(BehavioralTaskCaseGrpcRequest request) =>
+		public async ValueTask<TestScoreGrpcResponse> Unit3CaseAsync(TaskCaseGrpcRequest request) =>
 			await _taskProgressService.SetTaskProgressAsync(request.UserId, Unit3, Unit3.Tasks[4], request.IsRetry, request.Duration, CountProgress(request.Value == 1));
 
-		public async ValueTask<TestScoreGrpcResponse> Unit3TrueFalseAsync(BehavioralTaskTrueFalseGrpcRequest request)
+		public async ValueTask<TestScoreGrpcResponse> Unit3TrueFalseAsync(TaskTrueFalseGrpcRequest request)
 		{
 			ITaskTrueFalseAnswer[] answers = request.Answers;
 
@@ -47,7 +48,7 @@ namespace Service.TutorialBehavioral.Services
 			return await _taskProgressService.SetTaskProgressAsync(request.UserId, Unit3, Unit3.Tasks[5], request.IsRetry, request.Duration, progress);
 		}
 
-		public async ValueTask<TestScoreGrpcResponse> Unit3GameAsync(BehavioralTaskGameGrpcRequest request) =>
+		public async ValueTask<TestScoreGrpcResponse> Unit3GameAsync(TaskGameGrpcRequest request) =>
 			await _taskProgressService.SetTaskProgressAsync(request.UserId, Unit3, Unit3.Tasks[6], request.IsRetry, request.Duration);
 	}
 }

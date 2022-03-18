@@ -105,7 +105,7 @@ namespace Service.TutorialBehavioral.Services
 
 				//Else - if prev unit all tasks score >=80
 				int prevUnitIndex = unitIndex - 1;
-				UnitStateGrpcModel prevUnitProgress = await GetUnitProgressAsync(userId, prevUnitIndex);
+				StateGrpcModel prevUnitProgress = await GetUnitProgressAsync(userId, prevUnitIndex);
 				if (prevUnitProgress == null)
 				{
 					_logger.LogError("Can't get progress of previous unit ({unit}) for user {userId}", prevUnitIndex, userId);
@@ -130,9 +130,9 @@ namespace Service.TutorialBehavioral.Services
 			return progressHasProgress;
 		}
 
-		public async ValueTask<UnitStateGrpcModel> GetUnitProgressAsync(Guid? userId, int unit)
+		public async ValueTask<StateGrpcModel> GetUnitProgressAsync(Guid? userId, int unit)
 		{
-			var result = new UnitStateGrpcModel();
+			var result = new StateGrpcModel();
 
 			EducationProgressGrpcResponse progressResponse = await _progressService.GetProgressAsync(new GetEducationProgressGrpcRequest
 			{
@@ -190,7 +190,7 @@ namespace Service.TutorialBehavioral.Services
 				});
 			}
 
-			return new UnitStateGrpcModel
+			return new StateGrpcModel
 			{
 				Unit = unit,
 				TestScore = unitProgress,
@@ -247,7 +247,7 @@ namespace Service.TutorialBehavioral.Services
 		{
 			TutorialEducationProgressGrpcResponse tutorialProgress = await _progressService.GetTutorialProgressAsync(new GetTutorialEducationProgressGrpcRequest
 			{
-				Tutorial = EducationTutorial.PersonalFinance,
+				Tutorial = TutorialHelper.Tutorial - 1,
 				UserId = userId
 			});
 

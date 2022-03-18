@@ -10,7 +10,7 @@ namespace Service.TutorialBehavioral.Services
 	{
 		ValueTask<TestScoreGrpcResponse> SetTaskProgressAsync(Guid? userId, EducationStructureUnit unit, EducationStructureTask task, bool isRetry, TimeSpan duration, int? progress = null);
 
-		ValueTask<UnitStateGrpcModel> GetUnitProgressAsync(Guid? userId, int unit);
+		ValueTask<StateGrpcModel> GetUnitProgressAsync(Guid? userId, int unit);
 
 		ValueTask<TaskTypeProgressInfo> GetTotalProgressAsync(Guid? userId, int? unit = null);
 	}

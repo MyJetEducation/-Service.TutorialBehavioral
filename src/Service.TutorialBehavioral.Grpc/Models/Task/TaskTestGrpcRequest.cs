@@ -4,18 +4,18 @@ using System.Runtime.Serialization;
 namespace Service.TutorialBehavioral.Grpc.Models
 {
 	[DataContract]
-	public class BehavioralTaskGameGrpcRequest
+	public class TaskTestGrpcRequest
 	{
 		[DataMember(Order = 1)]
 		public Guid? UserId { get; set; }
 
 		[DataMember(Order = 2)]
-		public bool IsRetry { get; set; }
+		public TaskTestAnswerGrpcModel[] Answers { get; set; }
 
 		[DataMember(Order = 3)]
-		public TimeSpan Duration { get; set; }
+		public bool IsRetry { get; set; }
 
 		[DataMember(Order = 4)]
-		public bool Passed { get; set; }
+		public TimeSpan Duration { get; set; }
 	}
 }

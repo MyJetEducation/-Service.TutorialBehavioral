@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Service.TutorialBehavioral.Grpc.Models
+namespace Service.TutorialBehavioral.Grpc.Models.Task
 {
 	[DataContract]
-	public class BehavioralTaskCaseGrpcRequest
+	public class TaskCaseGrpcRequest
 	{
 		[DataMember(Order = 1)]
 		public Guid? UserId { get; set; }
