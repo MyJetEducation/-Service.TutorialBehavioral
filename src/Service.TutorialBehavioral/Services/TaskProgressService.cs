@@ -161,6 +161,9 @@ namespace Service.TutorialBehavioral.Services
 			var tasks = new List<TaskStateGrpcModel>();
 			IDictionary<int, EducationStructureTask> unitTasks = EducationHelper.GetUnit(TutorialHelper.Tutorial, unit).Tasks;
 
+			bool hasRetryCount = await _retryTaskService.HasRetryCountAsync(userId);
+			DateTime? lastRetryDate = await _retryTaskService.GetRetryLastDateAsync(userId);
+
 			foreach ((_, EducationStructureTask structureTask) in unitTasks)
 			{
 				int taskId = structureTask.Task;
@@ -181,8 +184,8 @@ namespace Service.TutorialBehavioral.Services
 					RetryInfo = new TaskRetryInfoGrpcModel
 					{
 						InRetry = inRetryState,
-						CanRetryByCount = canRetryTask && await _retryTaskService.HasRetryCountAsync(userId),
-						CanRetryByTime = canRetryTask && await _retryTaskService.CanRetryByTimeAsync(userId, taskProgress.Date)
+						CanRetryByCount = canRetryTask && hasRetryCount,
+						CanRetryByTime = canRetryTask && _retryTaskService.CanRetryByTimeAsync(taskProgress.Date, lastRetryDate)
 					}
 				});
 			}
