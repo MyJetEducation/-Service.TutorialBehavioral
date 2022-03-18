@@ -10,7 +10,7 @@ namespace Service.TutorialBehavioral.Services
 {
 	public partial class TutorialBehavioralService
 	{
-		private static readonly EducationStructureUnit Unit3 = TutorialHelper.EducationStructureTutorial.Units[3];
+		private static readonly EducationStructureUnit Unit3 = TutorialHelper.StructureTutorial.Units[3];
 
 		public async ValueTask<TestScoreGrpcResponse> Unit3TextAsync(BehavioralTaskTextGrpcRequest request) =>
 			await _taskProgressService.SetTaskProgressAsync(request.UserId, Unit3, Unit3.Tasks[1], request.IsRetry, request.Duration);

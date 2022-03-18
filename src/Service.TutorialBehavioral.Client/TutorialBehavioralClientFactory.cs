@@ -1,16 +1,17 @@
 ﻿using JetBrains.Annotations;
-using MyJetWallet.Sdk.Grpc;
+using Microsoft.Extensions.Logging;
+using Service.Grpc;
 using Service.TutorialBehavioral.Grpc;
 
 namespace Service.TutorialBehavioral.Client
 {
 	[UsedImplicitly]
-	public class TutorialBehavioralClientFactory : MyGrpcClientFactory
+	public class TutorialBehavioralClientFactory : GrpcClientFactory
 	{
-		public TutorialBehavioralClientFactory(string grpcServiceUrl) : base(grpcServiceUrl)
+		public TutorialBehavioralClientFactory(string grpcServiceUrl, ILogger logger) : base(grpcServiceUrl, logger)
 		{
 		}
 
-		public ITutorialBehavioralService GetTutorialBehavioralService() => CreateGrpcService<ITutorialBehavioralService>();
+		public IGrpcServiceProxy<ITutorialBehavioralService> GetTutorialBehavioralService() => CreateGrpcService<ITutorialBehavioralService>();
 	}
 }
