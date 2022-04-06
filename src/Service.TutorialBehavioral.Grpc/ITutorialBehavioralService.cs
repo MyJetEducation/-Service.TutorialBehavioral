@@ -1,6 +1,5 @@
 ﻿using System.ServiceModel;
 using System.Threading.Tasks;
-using Service.TutorialBehavioral.Grpc.Models;
 using Service.TutorialBehavioral.Grpc.Models.State;
 using Service.TutorialBehavioral.Grpc.Models.Task;
 

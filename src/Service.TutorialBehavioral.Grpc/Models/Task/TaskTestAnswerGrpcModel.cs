@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using Service.Education;
 
-namespace Service.TutorialBehavioral.Grpc.Models
+namespace Service.TutorialBehavioral.Grpc.Models.Task
 {
 	[DataContract]
 	public class TaskTestAnswerGrpcModel : ITaskTestAnswer
