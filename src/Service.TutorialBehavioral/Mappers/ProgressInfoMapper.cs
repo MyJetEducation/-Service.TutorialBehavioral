@@ -1,5 +1,5 @@
 ﻿using Service.Core.Client.Constants;
-using Service.TutorialBehavioral.Grpc.Models.State;
+using Service.Education.Contracts.State;
 using Service.TutorialBehavioral.Models;
 
 namespace Service.TutorialBehavioral.Mappers

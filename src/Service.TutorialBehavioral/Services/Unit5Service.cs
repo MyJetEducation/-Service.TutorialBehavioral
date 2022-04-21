@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Service.Education;
+using Service.Education.Contracts;
+using Service.Education.Contracts.Task;
 using Service.Education.Structure;
-using Service.TutorialBehavioral.Grpc.Models.Task;
 using Service.TutorialBehavioral.Helper;
 using static Service.Education.Helpers.AnswerHelper;
 

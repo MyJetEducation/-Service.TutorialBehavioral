@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Service.Education.Contracts.State;
+using Service.Education.Contracts.Task;
 using Service.Education.Structure;
-using Service.TutorialBehavioral.Grpc.Models.State;
-using Service.TutorialBehavioral.Grpc.Models.Task;
 using Service.TutorialBehavioral.Models;
 
 namespace Service.TutorialBehavioral.Services

@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Service.Core.Client.Models;
 using Service.Education.Constants;
+using Service.Education.Contracts.State;
+using Service.Education.Contracts.Task;
 using Service.Education.Extensions;
 using Service.Education.Helpers;
 using Service.Education.Structure;
 using Service.EducationProgress.Grpc;
 using Service.EducationProgress.Grpc.Models;
-using Service.TutorialBehavioral.Grpc.Models.State;
-using Service.TutorialBehavioral.Grpc.Models.Task;
 using Service.TutorialBehavioral.Helper;
 using Service.TutorialBehavioral.Models;
 
