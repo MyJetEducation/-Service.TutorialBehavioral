@@ -22,7 +22,7 @@ namespace Service.TutorialBehavioral.Services
 				+ CheckAnswer(20, answers, 2, 2, 3)
 				+ CheckAnswer(20, answers, 3, 1)
 				+ CheckAnswer(20, answers, 4, 2)
-				+ CheckAnswer(20, answers, 5, 1, 2);
+				+ CheckAnswer(20, answers, 5, 2);
 
 			return await _taskProgressService.SetTaskProgressAsync(request.UserId, Unit2, Unit2.Tasks[2], request.IsRetry, request.Duration, progress);
 		}
